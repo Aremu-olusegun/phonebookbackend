@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 
 const cors = require('cors')
+app.use(express.static('build'))
 
 app.use(cors())
 
@@ -101,7 +102,7 @@ app.get('/info', (request, response) => {
         )
 })
 
-const PORT = 3000
+const PORT = 5000
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 }) 
