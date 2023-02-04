@@ -1,8 +1,9 @@
 const express = require('express')
 const app = express()
+const path = require('path')
 
 const cors = require('cors')
-app.use(express.static('build'))
+app.use('./public', express.static(path.join(__dirname, 'build')));
 
 app.use(cors())
 
@@ -105,7 +106,7 @@ app.get('/info', (request, response) => {
 const PORT = 5000
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
-}) 
+})
 
 
 
