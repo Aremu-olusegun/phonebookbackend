@@ -30,6 +30,10 @@ let persons = [
     }
 ]
 
+app.use((req, res) => {
+	res.status(200).sendFile(path.resolve(__dirname, 'public', 'index.html'))
+})
+
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
@@ -103,7 +107,7 @@ app.get('/info', (request, response) => {
         )
 })
 
-const PORT = 3000
+const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
