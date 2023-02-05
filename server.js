@@ -3,7 +3,11 @@ const app = express()
 const path = require('path')
 
 const cors = require('cors')
-app.use('./public', express.static(path.join(__dirname, 'build')));
+
+const bodyParser = require('body-parser')
+app.use(bodyParser.json())
+
+app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(cors())
 
@@ -30,12 +34,12 @@ let persons = [
     }
 ]
 
-app.use((req, res) => {
-	res.status(200).sendFile(path.resolve(__dirname, 'public', 'index.html'))
+app.get('*', (req, res) => {
+  res.status(200).sendFile(path.resolve(__dirname, 'public', 'index.html'))
 })
 
 app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
+  response.send('Hello world')
 })
 
 app.get('/api/persons', (request, response) => {
