@@ -7,7 +7,7 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, '/public')))
 
 app.use(cors())
 
@@ -34,9 +34,9 @@ let persons = [
     }
 ]
 
-app.get('*', (req, res) => {
+/* app.get('*', (req, res) => {
   res.status(200).sendFile(path.resolve(__dirname, 'public', 'index.html'))
-})
+}) */
 
 app.get('/', (request, response) => {
   response.send('Hello world')
