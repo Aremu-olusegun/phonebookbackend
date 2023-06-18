@@ -7,6 +7,8 @@ const cors = require('cors')
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
+app.use(express.static('build'))
+
 app.use(express.static(path.join(__dirname, '/public')))
 
 app.use(cors())
