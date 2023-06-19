@@ -13,6 +13,8 @@ app.use(express.static(path.join(__dirname, '/public')))
 
 app.use(cors())
 
+const Persons = require("./mongo")
+
 let persons = [
     { 
       "id": 1,
@@ -44,76 +46,97 @@ app.get('/', (request, response) => {
   response.send('Hello world')
 })
 
-app.get('/api/persons', (request, response) => {
-  response.json(persons)
-})
-
-app.get('/api/persons/:id', (request, response) => {
-    const number = parseInt(request.params.id)
-    const note = persons.find(person => person.id === number)
-    if (note) {    
-        response.json(note)  
-    } else {    
-        response.status(404).end('Number was not found')  
-    }
-})
-
-app.delete('/api/persons/:id', (request, response) => {
-    const number = parseInt(request.params.id)
-    persons = persons.filter(person => person.id !== number)
-    response.status(204).end()
-})
-
-const generateId = () => {
-    const maxId = persons.length > 0
-      ? Math.max(...persons.map(n => n.id))
-      : 0
-    return maxId + 1
+app.get('/api/persons', async (request, response) => {
+  try {
+    const data = await Persons.find({});
+    response.json(data);
+  } catch (error) {
+    response.status(500).json({ error: 'Could not fetch persons' });
   }
-  
-  app.post('/api/persons', (request, response) => {
-    const body = request.body
+});
+
+app.get('/api/persons/:id', async (request, response) => {
+  try {
+    const id = request.params.id;
+    const person = await Persons.findById(id);
     
-    if (!body.name || !body.number) {
-      return response.status(400).json({ 
-        error: 'Name or number missing' 
-      })
+    if (person) {
+      response.json(person);
+    } else {
+      response.status(404).end('Person not found');
     }
-  
-    const duplicatePerson = persons.find(p => p.name === body.name)
-    if (duplicatePerson) {
-      return response.status(400).json({ 
-        error: 'Name already exists in the phonebook' 
-      })
+  } catch (error) {
+    console.log(error);
+    response.status(400).end('Invalid ID format');
+  }
+});
+
+
+app.delete('/api/persons/:id', async (request, response) => {
+  try {
+    const id = request.params.id;
+    const deletedPerson = await Persons.findByIdAndDelete(id);
+    
+    if (deletedPerson) {
+      response.json(deletedPerson);
+    } else {
+      response.status(404).end('Person not found');
     }
-  
-    const person = {
+  } catch (error) {
+    console.log(error);
+    response.status(400).end('Person could not be deleted');
+  }
+});
+
+
+app.post('/api/persons', async (request, response) => {
+  const body = request.body;
+
+  if (!body.name || !body.number) {
+    return response.status(400).json({
+      error: 'Name or number missing'
+    });
+  }
+
+  try {
+    const person = new Persons({
       name: body.name,
-      number: body.number,
-      id: generateId()
-    }
-  
-    persons = persons.concat(person)
-    response.json(person)
-  })
-  
+      number: body.number
+    });
+
+    const savedPerson = await person.save();
+    response.json(savedPerson);
+  } catch (error) {
+    console.log(error);
+    response.status(500).end();
+  }
+});
 
 
-app.get('/info', (request, response) => {
+
+app.get('/info', async (request, response) => {
+  try {
     const currentDate = new Date().toLocaleString();
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-        response.send(
-            `
-            <div>
-                <p>Phonebook has info for ${persons.length} people</p>
-            </div>
-            <div>
-                <p>${currentDate} (${timeZone})</p>
-            </div>`
-        )
-})
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-const PORT = 3001
+    const info = `
+      <div>
+        <p>Phonebook has info for ${persons.length} people</p>
+      </div>
+      <div>
+        <p>${currentDate} (${timeZone})</p>
+      </div>
+    `;
+    
+    response.send(info);
+  } catch (error) {
+    console.log(error);
+    response.status(500).end();
+  }
+});
+
+
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

@@ -1,22 +1,25 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+require('dotenv').config();
 
-if (process.argv.length<3) {
-  console.log('give password as argument')
-  process.exit(1)
-}
+const url = process.env.MONGODB_URI;
 
-const password = process.argv[2] || '8c7p46alCk2p66qy';
+(async () => {
+    try {
+      await mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
+      console.log('Database is now successfully connected');
+    } catch (error) {
+      console.error('Database connection error:', error);
+      process.exit(1);
+    }
+  })();
 
-const url =
-  `mongodb+srv://vercel-admin-user:${password}@cluster0.qfcsvkk.mongodb.net/?retryWrites=true&w=majority`
+mongoose.set('strictQuery', false);
 
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
-
-mongoose.set('strictQuery',false);
+console.log(process.env.PORT)
 
 const personSchema = new mongoose.Schema({
-  content: String,
-  content: String
-})
+  name: String,
+  number: String
+});
 
-module.exports = mongoose.model('Person', personSchema);
+module.exports = mongoose.model('Persons', personSchema);
