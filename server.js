@@ -72,23 +72,6 @@ app.get('/api/persons/:id', async (request, response) => {
 });
 
 
-app.delete('/api/persons/:id', async (request, response) => {
-  try {
-    const id = request.params.id;
-    const deletedPerson = await Persons.findByIdAndRemove(id);
-    
-    if (deletedPerson) {
-      response.json(deletedPerson);
-    } else {
-      response.status(404).end('Person not found');
-    }
-  } catch (error) {
-    console.log(error);
-    response.status(400).end('Person could not be deleted');
-  }
-});
-
-
 app.post('/api/persons', async (request, response) => {
   const body = request.body;
 
@@ -162,6 +145,23 @@ app.get('/info', async (request, response) => {
     response.status(500).end();
   }
 });
+
+app.delete('/api/persons/:id', async (request, response) => {
+  try {
+    const id = request.params.id;
+    const deletedPerson = await Persons.findByIdAndDelete(id);
+    
+    if (deletedPerson) {
+      response.json(deletedPerson);
+    } else {
+      response.status(404).end('Person not found');
+    }
+  } catch (error) {
+    console.log(error);
+    response.status(400).end('Person could not be deleted');
+  }
+});
+
 
 
 const PORT = process.env.PORT
