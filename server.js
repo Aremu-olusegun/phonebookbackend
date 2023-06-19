@@ -15,7 +15,7 @@ app.use(cors())
 
 const Persons = require("./mongo")
 
-let persons = [
+/* let persons = [
     { 
       "id": 1,
       "name": "Arto Hellas", 
@@ -36,7 +36,7 @@ let persons = [
       "name": "Mary Poppendieck", 
       "number": "39-23-6423122"
     }
-]
+] */
 
 /* app.get('*', (req, res) => {
   res.status(200).sendFile(path.resolve(__dirname, 'public', 'index.html'))
@@ -113,7 +113,32 @@ app.post('/api/persons', async (request, response) => {
 });
 
 
-app.put("/api/persons:id")
+// Existing code...
+
+app.put('/api/persons/:id', async (request, response) => {
+  try {
+    const id = request.params.id;
+    const body = request.body;
+
+    // Find the existing person by ID
+    const existingPerson = await Persons.findById(id);
+
+    if (existingPerson) {
+      // Update the phone number of the existing person
+      existingPerson.number = body.number;
+      const updatedPerson = await existingPerson.save();
+      response.json(updatedPerson);
+    } else {
+      response.status(404).end('Person not found');
+    }
+  } catch (error) {
+    console.log(error);
+    response.status(400).end('Invalid ID format or phone number missing');
+  }
+});
+
+// Existing code...
+
 
 
 
