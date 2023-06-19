@@ -113,6 +113,9 @@ app.post('/api/persons', async (request, response) => {
 });
 
 
+app.put("/api/persons:id")
+
+
 
 app.get('/info', async (request, response) => {
   try {
@@ -121,7 +124,7 @@ app.get('/info', async (request, response) => {
 
     const info = `
       <div>
-        <p>Phonebook has info for ${persons.length} people</p>
+        <p>Phonebook has info for ${Persons.length} people</p>
       </div>
       <div>
         <p>${currentDate} (${timeZone})</p>
@@ -138,7 +141,7 @@ app.get('/info', async (request, response) => {
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+  console.log(`Server running on port http://localhost:${PORT}`)
 })
 
 
