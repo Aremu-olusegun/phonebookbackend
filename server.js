@@ -149,6 +149,7 @@ app.get('/info', async (request, response) => {
 app.delete('/api/persons/:id', async (request, response) => {
   try {
     const id = request.params.id;
+    console.log(id);
     const deletedPerson = await Persons.findByIdAndDelete(id);
     
     if (deletedPerson) {
